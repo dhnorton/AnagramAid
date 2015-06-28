@@ -1,2 +1,1 @@
-# Cuis-Smalltalk-anagram
-Anagram Aid
+An aid to solving anagrams.
