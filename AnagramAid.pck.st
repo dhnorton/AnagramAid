@@ -1,8 +1,8 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2390] on 28 June 2015 at 9:23:06.714726 am'!
-'Description Please enter a description for this package'!
-!provides: 'AnagramAid' 1 0!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 24 August 2015 at 10:06:14.050105 pm'!
+'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
+!provides: 'AnagramAid' 1 1!
 !classDefinition: #Anagram category: #AnagramAid!
-Object subclass: #Anagram
+TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -32,16 +32,16 @@ AnagramWindow class
 	instanceVariableNames: ''!
 
 
-!Anagram commentStamp: 'dhn 6/28/2015 09:03' prior: 0!
-Provide the model for operating Anagram Aid.!
+!Anagram commentStamp: 'dhn 1/26/2015 16:26' prior: 0!
+Provide the behavior for operating Anagram Aid.!
 
-!AnagramCover commentStamp: 'dhn 6/28/2015 09:04' prior: 0!
-Cover class for Anagram Aid. Provides communication between model and window objects.!
+!AnagramCover commentStamp: 'dhn 1/26/2015 18:49' prior: 0!
+Cover class for Anagram Aid. Provides communication among model and graphics objects.!
 
 !AnagramWindow commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
 The window for Anagram Aid.!
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 6/27/2015 11:09'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/24/2015 21:58'!
 atRandom
 	"Randomly display clues"
 	| col temp1 |
@@ -54,6 +54,7 @@ atRandom
 			nextPutAll: ea;
 			nextPutAll: '    '].
 	self cluesAdd: temp1 contents.
+	self board cluesFont.
 	count _ count + col size.! !
 
 !Anagram methodsFor: 'accessing'!
@@ -204,7 +205,7 @@ omitted: aString
 	"Set the value of omitted to aString"
 	omitted _ aString.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 6/27/2015 11:59'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/24/2015 22:01'!
 permuted
 	"Display a set of permuted clues"
 	| clueSet clue str |
@@ -221,6 +222,7 @@ permuted
 			nextPutAll: ea;
 			nextPutAll: '    '].
 	self cluesAdd: str contents.
+	self board cluesFont.
 	count _ count + clueSet size! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 1/26/2015 18:19'!
@@ -322,14 +324,14 @@ initialize
 	myWindow	morphExtent: 470@600
 ! !
 
-!AnagramCover class methodsFor: 'documentation' stamp: 'dhn 6/28/2015 08:59'!
+!AnagramCover class methodsFor: 'documentation' stamp: 'dhn 3/31/2015 09:30'!
 how
 "
-	AnagramCover open.
+	AnagramCover newGame
 "! !
 
-!AnagramCover class methodsFor: 'class initialization' stamp: 'dhn 6/28/2015 08:59'!
-open
+!AnagramCover class methodsFor: 'as yet unclassified' stamp: 'dhn 3/31/2015 09:26'!
+newGame
 	^ self basicNew initialize! !
 
 !AnagramWindow methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:44'!
@@ -343,6 +345,12 @@ addAllButtons: aCollection
 !AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
 buttonPane
 	^ buttonPane! !
+
+!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 8/24/2015 21:57'!
+cluesFont
+	"Set the font for the clues"
+	self cluesString actualContents 
+		font: (AbstractFont familyName: 'DejaVu Sans Mono' aroundPointSize: 10).! !
 
 !AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
 cluesMorph
