@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 25 August 2015 at 9:12:58.453931 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 26 August 2015 at 6:46:37.260866 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 3!
+!provides: 'AnagramAid' 1 4!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -28,7 +28,12 @@ Provide the behavior for operating Anagram Aid.!
 !AnagramWindow commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
 The window for Anagram Aid.!
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/25/2015 20:46'!
+!TextComposition methodsFor: '*AnagramAid' stamp: 'dhn 8/26/2015 18:32'!
+editor
+
+	^ editor! !
+
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 13:32'!
 atRandom
 	"Randomly display clues"
 	| col temp1 |
@@ -39,7 +44,7 @@ atRandom
 	col do: [:ea |
 		temp1
 			nextPutAll: ea;
-			nextPutAll: '    '].
+			nextPutAll: self separators].
 	self cluesAdd: temp1 contents.
 	self board cluesFont.
 	count _ count + col size.! !
@@ -147,12 +152,13 @@ lettersOmitted
 		nextPutAll: omitted; newLine.
 	^ str contents! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/29/2015 15:10'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 18:02'!
 more
 	"Display the next set of clues, either at random or permuted"
 	jmb size > self class permuteLimit
 		ifTrue: [ self atRandom ]
 		ifFalse: [ self permuted ].
+	self board adjustExtentFor: jmb.
 	self showStatistics! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 1/26/2015 18:16'!
@@ -196,7 +202,7 @@ omitted: aString
 	"Set the value of omitted to aString"
 	omitted _ aString.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/24/2015 22:01'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 13:31'!
 permuted
 	"Display a set of permuted clues"
 	| clueSet clue str |
@@ -211,7 +217,7 @@ permuted
 	clueSet do: [:ea |
 		str
 			nextPutAll: ea;
-			nextPutAll: '    '].
+			nextPutAll: self separators].
 	self cluesAdd: str contents.
 	self board cluesFont.
 	count _ count + clueSet size! !
@@ -241,6 +247,11 @@ revertButton
 		color: Color white;
 		setBalloonText: 'Re-inserts removed characters,
 then displays the original set.'.! !
+
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 13:40'!
+separators
+	"Answer the string which separates the clues"
+	^ '  '! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/25/2015 20:43'!
 showStatistics
@@ -306,6 +317,25 @@ addAllButtons: aCollection
 		buttonPane
 			addMorph: ea
 			proportionalWidth: AnagramWindow buttonWidth]! !
+
+!AnagramWindow methodsFor: 'resizing' stamp: 'dhn 8/26/2015 18:44'!
+adjustExtentFor: aString
+	"Set width of extent  such that clues of aString appear in columns"
+	| inner charPixels old scrollPixels nl pad clue cols new |
+	inner _ self findDeepSubmorphThat: [:s | s is: #InnerTextMorph] ifAbsent: [^ nil].
+	charPixels _ inner textComposition editor lastFont widthOf: $M.		"width per character"
+	old _ self morphExtent.
+	scrollPixels _ 13.		"scroll bar width"
+	nl _ charPixels.			"new line width"
+	pad _ charPixels * self model separators size.	"padding width"
+	clue _ charPixels * aString size.		"clue width"
+	
+	cols _ ((old x) + pad - nl - scrollPixels) / (clue + pad).
+	cols _ 3 max: cols floor.		"at least 3 columns"
+	
+	new _ (cols * (clue + pad)) - pad + nl + scrollPixels.
+	
+	self morphExtent: new @ (old y).! !
 
 !AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/25/2015 17:10'!
 buildMorphicWindow
