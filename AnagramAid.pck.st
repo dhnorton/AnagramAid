@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 25 August 2015 at 8:25:21.015931 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 25 August 2015 at 9:12:58.453931 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 2!
+!provides: 'AnagramAid' 1 3!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -28,12 +28,12 @@ Provide the behavior for operating Anagram Aid.!
 !AnagramWindow commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
 The window for Anagram Aid.!
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/24/2015 21:58'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/25/2015 20:46'!
 atRandom
 	"Randomly display clues"
 	| col temp1 |
 	col _ Set new.
-	Anagram cluesToDisplay timesRepeat: [
+	self class cluesToDisplay timesRepeat: [
 		col add: jmb shuffled].	"avoid duplicates"
 	temp1 _ String new writeStream.
 	col do: [:ea |
@@ -242,7 +242,7 @@ revertButton
 		setBalloonText: 'Re-inserts removed characters,
 then displays the original set.'.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/26/2015 16:57'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/25/2015 20:43'!
 showStatistics
 	"Update the status area"
 	| str |
@@ -255,12 +255,7 @@ showStatistics
 		nextPutAll: self jmb size asString;
 		nextPutAll: (self letterCount: jmb);
 		newLine.
-	self statusAdd: str contents.! !
-
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/26/2015 17:15'!
-statusAdd: aString
-	"Display aString in the status area"
-	self board statusString actualContents: aString.! !
+	self board statusString actualContents: str contents.! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 2/1/2015 15:53'!
 without
@@ -347,9 +342,13 @@ buildMorphicWindow
 buttonPane
 	^ buttonPane! !
 
-!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 8/24/2015 21:57'!
+!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 8/25/2015 21:07'!
 cluesFont
-	"Set the font for the clues"
+	"If the font 'DejaVu Sans Mono' is available, use it for the clues"
+	
+	AbstractFont familyNames 
+		detect: [:f | f = 'DejaVu Sans Mono'] 
+			ifNone: [^ self].
 	self cluesString actualContents 
 		font: (AbstractFont familyName: 'DejaVu Sans Mono' aroundPointSize: 10).! !
 
