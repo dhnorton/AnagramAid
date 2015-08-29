@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 26 August 2015 at 6:46:37.260866 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 29 August 2015 at 11:47:10.917229 am'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 4!
+!provides: 'AnagramAid' 1 5!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -318,24 +318,26 @@ addAllButtons: aCollection
 			addMorph: ea
 			proportionalWidth: AnagramWindow buttonWidth]! !
 
-!AnagramWindow methodsFor: 'resizing' stamp: 'dhn 8/26/2015 18:44'!
+!AnagramWindow methodsFor: 'resizing' stamp: 'dhn 8/29/2015 11:43'!
 adjustExtentFor: aString
 	"Set width of extent  such that clues of aString appear in columns"
-	| inner charPixels old scrollPixels nl pad clue cols new |
-	inner _ self findDeepSubmorphThat: [:s | s is: #InnerTextMorph] ifAbsent: [^ nil].
-	charPixels _ inner textComposition editor lastFont widthOf: $M.		"width per character"
-	old _ self morphExtent.
-	scrollPixels _ 13.		"scroll bar width"
+	| innerMorph charPixels oldExtent newWidth scrollPixels nl pad clue cols |
+	innerMorph _ self findDeepSubmorphThat: [:s | s is: #InnerTextMorph] ifAbsent: [^ nil].
+	charPixels _ innerMorph textComposition editor lastFont widthOf: $M.		"width per character"
+	oldExtent _ self morphExtent.
+	(innerMorph owner verticalScrollBar valueOfProperty: #visible)
+		ifTrue: [scrollPixels _ 13]		"scroll bar width"
+		ifFalse: [scrollPixels _ 0].
 	nl _ charPixels.			"new line width"
 	pad _ charPixels * self model separators size.	"padding width"
 	clue _ charPixels * aString size.		"clue width"
 	
-	cols _ ((old x) + pad - nl - scrollPixels) / (clue + pad).
+	cols _ ((oldExtent x) + pad - nl - scrollPixels) / (clue + pad).
 	cols _ 3 max: cols floor.		"at least 3 columns"
 	
-	new _ (cols * (clue + pad)) - pad + nl + scrollPixels.
+	newWidth _ (cols * (clue + pad)) + pad + nl + scrollPixels.
 	
-	self morphExtent: new @ (old y).! !
+	self morphExtent: newWidth @ (oldExtent y).! !
 
 !AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/25/2015 17:10'!
 buildMorphicWindow
