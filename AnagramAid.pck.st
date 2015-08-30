@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 30 August 2015 at 11:14:47.699556 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 30 August 2015 at 1:31:42.742312 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 7!
+!provides: 'AnagramAid' 1 8!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -57,38 +57,20 @@ board: anObject
 	"Set the value of board to anObject"
 	board _ anObject! !
 
-!Anagram methodsFor: 'accessing'!
-clues
-	^ clues.! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:09'!
-clues: aString
-	"Set the value of clues to aString"
-	clues _ aString.! !
-
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/28/2015 11:23'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:26'!
 configureButtons
 	"Choose which buttons to show based on the sizes of #jmb and #omitted"
-	self jmb size > self class permuteLimit
+	jmb size > self class permuteLimit
 		ifTrue: [
-			self omitted size isZero
+			omitted size isZero
 				ifTrue: [ self putButtons: {self newButton. self moreButton. self withoutButton} ]
 				ifFalse: [ self putButtons: {self newButton. self moreButton. self withoutButton. self revertButton} ]]
 		ifFalse: [
-			self omitted size isZero
+			omitted size isZero
 				ifTrue: [ self putButtons: {self newButton} ]
 				ifFalse: [ self putButtons: {self newButton. self withoutButton. self revertButton} ]].! !
 
-!Anagram methodsFor: 'accessing'!
-count
-	^ count.! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:10'!
-count: aNumber
-	"Set the value of count to aNumber"
-	count _ aNumber! !
-
-!Anagram methodsFor: 'operating' stamp: 'dhn 2/1/2015 15:51'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:28'!
 entry
 	"Acquire a new anagram"
 	| ans |
@@ -96,25 +78,15 @@ entry
 		request: 'Enter the Anagram'
 		initialAnswer: ''.
 	ans isEmpty ifFalse: [
-		self jmb: ans asUppercase.
+		jmb _ ans asUppercase.
 		count _ 0.
-		self omitted: String new.
+		omitted _ String new.
 		self more].
 	self configureButtons.! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 8/25/2015 19:59'!
 initialize
 	super initialize! !
-
-!Anagram methodsFor: 'accessing'!
-jmb
-	jmb ifNil: [ jmb _ '' ].
-	^ jmb.! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:07'!
-jmb: aString
-	"Set the value of jmb to aString"
-	jmb _ aString.! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:16'!
 letterCount: aString
@@ -134,12 +106,12 @@ letterCount: aString
 			nextPutAll: (dix at: char) printString; space].
 	^ str contents.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 19:48'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:25'!
 lettersOmitted
 	"Answer a print string showing the letters omitted from the anagram"
 	| str |
 	str _ String new writeStream.
-	self omitted isEmpty 
+	omitted isEmpty 
 		ifTrue: [^ '']
 		ifFalse: [
 			str
@@ -178,25 +150,6 @@ newButton
 		setBalloonText: 'Asks for letters of a new anagram,
 then displays different combinations of those letters.'.! !
 
-!Anagram methodsFor: 'accessing'!
-omit
-	^ omit.! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:06'!
-omit: aString
-	"Set the value of omit to aString"
-	omit _ aString.! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/28/2015 11:24'!
-omitted
-	omitted ifNil: [ omitted _ '' ].
-	^ omitted! !
-
-!Anagram methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:05'!
-omitted: aString
-	"Set the value of omitted to aString"
-	omitted _ aString.! !
-
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:13'!
 permuted
 	"Display a set of permuted clues"
@@ -224,11 +177,11 @@ putButtons: aCollection
 		removeButtons;
 		addAllButtons: aCollection.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/29/2015 15:51'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:25'!
 revert
 	"Return the omitted characters to the anagram"
 	jmb _ jmb , omitted.
-	self omitted: String new.
+	omitted _ String new.
 	self configureButtons.
 	self more! !
 
@@ -248,7 +201,7 @@ separators
 	"Answer the string which separates the clues"
 	^ '  '! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/25/2015 20:43'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:16'!
 showStatistics
 	"Update the status area"
 	| str |
@@ -258,12 +211,12 @@ showStatistics
 		nextPutAll: count asString;
 		newLine;
 		nextPutAll: 'characters = ';
-		nextPutAll: self jmb size asString;
+		nextPutAll: jmb size asString;
 		nextPutAll: (self letterCount: jmb);
 		newLine.
 	self board statusString actualContents: str contents.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:21'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:27'!
 without
 	"Remove letters, if specified, from the anagram and produce more clues"
 	| col what str |
@@ -271,16 +224,16 @@ without
 		request: 'Enter the letters to be omitted.'
 		initialAnswer: ''.
 	what isEmpty ifFalse: [
-		col _ self jmb asOrderedCollection.
-		self omit: what asUppercase asOrderedCollection.
-		self omit do: [ :ea |
+		col _ jmb asOrderedCollection.
+		what asUppercase asOrderedCollection do: [ :ea |
 			(col includes: ea) ifTrue: [
 				col remove: ea.
-				self omitted: self omitted, ea asString]].
+				omitted _ omitted, ea asString]].
 		str _ String new writeStream.
 		col do: [ :remainingLetter |
 			str nextPut: remainingLetter].
-		self jmb: str contents;
+		jmb _ str contents.
+		self
 			configureButtons;
 			more]! !
 
