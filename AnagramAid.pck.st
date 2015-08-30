@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 29 August 2015 at 11:47:10.917229 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 29 August 2015 at 8:41:31.690522 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 5!
+!provides: 'AnagramAid' 1 6!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -13,7 +13,7 @@ Anagram class
 
 !classDefinition: #AnagramWindow category: #AnagramAid!
 SystemWindow subclass: #AnagramWindow
-	instanceVariableNames: 'buttonPane statusString cluesString cluesMorph'
+	instanceVariableNames: 'buttonPane statusString cluesString'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AnagramAid'!
@@ -33,21 +33,20 @@ editor
 
 	^ editor! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 13:32'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:12'!
 atRandom
-	"Randomly display clues"
-	| col temp1 |
-	col _ Set new.
-	self class cluesToDisplay timesRepeat: [
-		col add: jmb shuffled].	"avoid duplicates"
-	temp1 _ String new writeStream.
-	col do: [:ea |
-		temp1
+	"Display randomly selected clues"
+	| set temp |
+	set _ Set new.
+	self class cluesToDisplay timesRepeat: [set add: jmb shuffled].	"avoid duplicates"
+	temp _ String new writeStream.
+	set do: [:ea |
+		temp
 			nextPutAll: ea;
 			nextPutAll: self separators].
-	self cluesAdd: temp1 contents.
+	self board cluesString actualContents: temp contents.
 	self board cluesFont.
-	count _ count + col size.! !
+	count _ count + set size! !
 
 !Anagram methodsFor: 'accessing'!
 board
@@ -66,12 +65,6 @@ clues
 clues: aString
 	"Set the value of clues to aString"
 	clues _ aString.! !
-
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/29/2015 10:30'!
-cluesAdd: aString
-	"Cause aString to appear in the Clues Area"
-	self board cluesString actualContents: aString
-! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 1/28/2015 11:23'!
 configureButtons
@@ -123,7 +116,7 @@ jmb: aString
 	"Set the value of jmb to aString"
 	jmb _ aString.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/29/2015 21:19'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:16'!
 letterCount: aString
 	"Answer a print string showing the number of times letters appear in aString"
 	| dix sorted str |
@@ -131,8 +124,8 @@ letterCount: aString
 	aString sort do: [ :ea | | sym |
 		sym _ ea asSymbol.
 		(dix includesKey: sym)
-			ifTrue: [	dix	at: sym	put: (dix at: sym) + 1 ]
-			ifFalse: [dix	at: sym	put: 1 ]].
+			ifTrue: [dix at: sym put: (dix at: sym) + 1]
+			ifFalse: [dix at: sym	put: 1]].
 	str _ String new writeStream newLine.
 	sorted _ dix keys asSortedCollection.
 	sorted do: [ :char |
@@ -141,16 +134,18 @@ letterCount: aString
 			nextPutAll: (dix at: char) printString; space].
 	^ str contents.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 1/30/2015 08:43'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 19:48'!
 lettersOmitted
 	"Answer a print string showing the letters omitted from the anagram"
 	| str |
 	str _ String new writeStream.
-	self omitted ifEmpty: [^ ''].
-	str
-		nextPutAll: 'Without: ';
-		nextPutAll: omitted; newLine.
-	^ str contents! !
+	self omitted isEmpty 
+		ifTrue: [^ '']
+		ifFalse: [
+			str
+				nextPutAll: 'Without: ';
+				nextPutAll: omitted; newLine.
+			^ str contents]! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 18:02'!
 more
@@ -202,7 +197,7 @@ omitted: aString
 	"Set the value of omitted to aString"
 	omitted _ aString.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/26/2015 13:31'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:13'!
 permuted
 	"Display a set of permuted clues"
 	| clueSet clue str |
@@ -218,7 +213,7 @@ permuted
 		str
 			nextPutAll: ea;
 			nextPutAll: self separators].
-	self cluesAdd: str contents.
+	self board cluesString actualContents: str contents.
 	self board cluesFont.
 	count _ count + clueSet size! !
 
@@ -268,7 +263,7 @@ showStatistics
 		newLine.
 	self board statusString actualContents: str contents.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 2/1/2015 15:53'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:21'!
 without
 	"Remove letters, if specified, from the anagram and produce more clues"
 	| col what str |
@@ -285,9 +280,9 @@ without
 		str _ String new writeStream.
 		col do: [ :remainingLetter |
 			str nextPut: remainingLetter].
-		self jmb: str contents.
-		self configureButtons.
-		self more]! !
+		self jmb: str contents;
+			configureButtons;
+			more]! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 1/26/2015 18:14'!
 withoutButton
@@ -339,22 +334,27 @@ adjustExtentFor: aString
 	
 	self morphExtent: newWidth @ (oldExtent y).! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/25/2015 17:10'!
+!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/29/2015 20:39'!
 buildMorphicWindow
 	"Specify the layout for the Anagram Assistant window"
-	| status statusMorph clues |
+	| status cluesMorph statusMorph clues |
 	
 	status _ LayoutMorph newRow
+		name: 'status area';
 		addMorph: (statusMorph _ TextModelMorph 
 			withModel: (statusString _ TextModel withText: 'Status Area')).
+	statusMorph name: #status.
 			
 	buttonPane _ LayoutMorph newRow
+		name: #buttons;
 		padding: #center; "#center causes the buttons to be centered in the row"
 		color: Color lightGreen.
 	
 	clues _ LayoutMorph newRow
+		name: 'clue area';
 		addMorph: (cluesMorph _ TextModelMorph 
 			withModel: (cluesString _ TextModel withText: 'Clues Area')).
+	cluesMorph name: #clues.
 			
 	statusMorph askBeforeDiscardingEdits: false;
 		wrapFlag: true.
@@ -383,10 +383,6 @@ cluesFont
 			ifNone: [^ self].
 	self cluesString actualContents 
 		font: (AbstractFont familyName: 'DejaVu Sans Mono' aroundPointSize: 10).! !
-
-!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
-cluesMorph
-	^ cluesMorph! !
 
 !AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
 cluesString
