@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 31 August 2015 at 4:32:40.392924 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 31 August 2015 at 4:53:04.728924 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 13!
+!provides: 'AnagramAid' 1 14!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -288,7 +288,7 @@ adjustExtentFor: aString
 	
 	self morphExtent: newWidth @ (oldExtent y).! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/31/2015 16:30'!
+!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/31/2015 16:51'!
 buildMorphicWindow
 	"Specify the layout for the Anagram Assistant window"
 	| status cluesMorph statusMorph clues |
@@ -318,8 +318,8 @@ buildMorphicWindow
 		
 	self layoutMorph
 			addMorph: status proportionalHeight: 0.15;		
-			addAdjusterAndMorph: buttonPane fixedHeight: 26;		
-			addAdjusterAndMorph: clues proportionalHeight: 1.0.
+			addMorph: buttonPane fixedHeight: 26;		
+			addMorph: clues proportionalHeight: 1.0.
 			
 	model putButtons: {model newButton}
 ! !
