@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 1 September 2015 at 2:41:31.852742 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 1 September 2015 at 3:01:19.862633 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 15!
+!provides: 'AnagramAid' 1 16!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -80,7 +80,7 @@ configureButtons
 				ifTrue: [ self putButtons: {self newButton} ]
 				ifFalse: [ self putButtons: {self newButton. self withoutButton. self revertButton} ]].! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:28'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:57'!
 entry
 	"Acquire a new anagram"
 	| ans |
@@ -88,7 +88,7 @@ entry
 		request: 'Enter the Anagram'
 		initialAnswer: ''.
 	ans isEmpty ifFalse: [
-		jmb _ ans asUppercase.
+		jmb _ (ans copyWithout: $ ) asUppercase.
 		count _ 0.
 		omitted _ String new.
 		self more].
@@ -226,7 +226,7 @@ showStatistics
 		newLine.
 	self board statusString actualContents: str contents.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:27'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:59'!
 without
 	"Remove letters, if specified, from the anagram and produce more clues"
 	| col what str |
@@ -235,7 +235,7 @@ without
 		initialAnswer: ''.
 	what isEmpty ifFalse: [
 		col _ jmb asOrderedCollection.
-		what asUppercase asOrderedCollection do: [ :ea |
+		(what copyWithout: $ ) asUppercase asOrderedCollection do: [ :ea |
 			(col includes: ea) ifTrue: [
 				col remove: ea.
 				omitted _ omitted, ea asString]].
