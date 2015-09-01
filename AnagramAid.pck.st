@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 31 August 2015 at 4:53:04.728924 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 1 September 2015 at 2:41:31.852742 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 14!
+!provides: 'AnagramAid' 1 15!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -33,18 +33,19 @@ editor
 
 	^ editor! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/31/2015 12:46'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:33'!
 atRandom
 	"Display randomly selected clues"
-	| set temp |
+	| set str |
 	set _ Set new.
 	self class cluesToDisplay timesRepeat: [set add: jmb shuffled].	"avoid duplicates"
-	temp _ String new writeStream.
+	str _ String new writeStream.
 	set do: [:ea |
-		temp
+		str
 			nextPutAll: ea;
 			nextPutAll: self separators].
-	self board cluesString actualContents: temp contents.
+	self board cluesString actualContents: (Text 
+		initialFont: self cluesFont stringOrText: str contents).
 	count _ count + set size! !
 
 !Anagram methodsFor: 'accessing'!
@@ -55,6 +56,16 @@ board
 board: anObject
 	"Set the value of board to anObject"
 	board _ anObject! !
+
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:26'!
+cluesFont
+	"Answer  DejaVu Sans Mono font if installed; default font otherwise"
+	   
+	AbstractFont familyNames     
+			detect: [:f | f = 'DejaVu Sans Mono']     
+				ifNone: [^ AbstractFont default].    
+	^ AbstractFont familyName: 'DejaVu Sans Mono' aroundPointSize: 10
+! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:26'!
 configureButtons
@@ -149,24 +160,25 @@ newButton
 		setBalloonText: 'Asks for letters of a new anagram,
 then displays different combinations of those letters.'.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/31/2015 12:47'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:36'!
 permuted
 	"Display a set of permuted clues"
-	| clueSet clue str |
+	| set clue str |
 	clue _ String new writeStream.
-	clueSet _ Set new.
+	set _ Set new.
 	(1 to: jmb size) permutationsDo: [ :letter |
 		clue reset.
 		(1 to: jmb size) do: [ :ix |
 			clue nextPut: (jmb at: (letter at: ix))].
-		clueSet add: clue contents].	"avoid duplicates"
+		set add: clue contents].	"avoid duplicates"
 	str _ String new writeStream.
-	clueSet do: [:ea |
+	set do: [:ea |
 		str
 			nextPutAll: ea;
 			nextPutAll: self separators].
-	self board cluesString actualContents: str contents.
-	count _ count + clueSet size! !
+	self board cluesString actualContents: (Text 
+		initialFont: self cluesFont stringOrText: str contents).
+	count _ count + set size! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 1/26/2015 18:19'!
 putButtons: aCollection
