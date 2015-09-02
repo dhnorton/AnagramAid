@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 1 September 2015 at 3:01:19.862633 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 2 September 2015 at 4:58:53.357186 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 16!
+!provides: 'AnagramAid' 1 17!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues count jmb omitted omit'
@@ -57,14 +57,11 @@ board: anObject
 	"Set the value of board to anObject"
 	board _ anObject! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:26'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/2/2015 16:57'!
 cluesFont
-	"Answer  DejaVu Sans Mono font if installed; default font otherwise"
+	"Answer the font for the clues"
 	   
-	AbstractFont familyNames     
-			detect: [:f | f = 'DejaVu Sans Mono']     
-				ifNone: [^ AbstractFont default].    
-	^ AbstractFont familyName: 'DejaVu Sans Mono' aroundPointSize: 10
+	^ AbstractFont familyName: self fontName aroundPointSize: 10
 ! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:26'!
@@ -93,6 +90,13 @@ entry
 		omitted _ String new.
 		self more].
 	self configureButtons.! !
+
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/2/2015 16:55'!
+fontName
+	"Answer the family name of a font for the clues"
+	
+	^ AbstractFont familyNames     
+		detect: [:f | f = 'DejaVu Sans Mono'] ifNone: [^ AbstractFont default familyName]! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 8/25/2015 19:59'!
 initialize
