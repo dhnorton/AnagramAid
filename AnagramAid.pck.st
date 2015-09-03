@@ -1,9 +1,9 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 2 September 2015 at 4:58:53.357186 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 3 September 2015 at 11:51:08.26875 am'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 17!
+!provides: 'AnagramAid' 1 18!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
-	instanceVariableNames: 'board clues count jmb omitted omit'
+	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AnagramAid'!
@@ -33,7 +33,7 @@ editor
 
 	^ editor! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:33'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/3/2015 11:48'!
 atRandom
 	"Display randomly selected clues"
 	| set str |
@@ -45,7 +45,7 @@ atRandom
 			nextPutAll: ea;
 			nextPutAll: self separators].
 	self board cluesString actualContents: (Text 
-		initialFont: self cluesFont stringOrText: str contents).
+		initialFont: cluesFont stringOrText: str contents).
 	count _ count + set size! !
 
 !Anagram methodsFor: 'accessing'!
@@ -56,13 +56,6 @@ board
 board: anObject
 	"Set the value of board to anObject"
 	board _ anObject! !
-
-!Anagram methodsFor: 'operating' stamp: 'dhn 9/2/2015 16:57'!
-cluesFont
-	"Answer the font for the clues"
-	   
-	^ AbstractFont familyName: self fontName aroundPointSize: 10
-! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/30/2015 13:26'!
 configureButtons
@@ -98,9 +91,11 @@ fontName
 	^ AbstractFont familyNames     
 		detect: [:f | f = 'DejaVu Sans Mono'] ifNone: [^ AbstractFont default familyName]! !
 
-!Anagram methodsFor: 'initialize-release' stamp: 'dhn 8/25/2015 19:59'!
+!Anagram methodsFor: 'initialize-release' stamp: 'dhn 9/3/2015 11:47'!
 initialize
-	super initialize! !
+	super initialize.
+	cluesFont _ AbstractFont familyName: self fontName aroundPointSize: 10
+! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:16'!
 letterCount: aString
@@ -164,7 +159,7 @@ newButton
 		setBalloonText: 'Asks for letters of a new anagram,
 then displays different combinations of those letters.'.! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:36'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 9/3/2015 11:48'!
 permuted
 	"Display a set of permuted clues"
 	| set clue str |
@@ -181,7 +176,7 @@ permuted
 			nextPutAll: ea;
 			nextPutAll: self separators].
 	self board cluesString actualContents: (Text 
-		initialFont: self cluesFont stringOrText: str contents).
+		initialFont: cluesFont stringOrText: str contents).
 	count _ count + set size! !
 
 !Anagram methodsFor: 'initialize-release' stamp: 'dhn 1/26/2015 18:19'!
