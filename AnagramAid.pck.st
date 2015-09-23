@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2463] on 3 September 2015 at 11:51:08.26875 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2505] on 22 September 2015 at 7:30:37.212788 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 18!
+!provides: 'AnagramAid' 1 19!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -22,8 +22,12 @@ AnagramWindow class
 	instanceVariableNames: ''!
 
 
-!Anagram commentStamp: 'dhn 1/26/2015 16:26' prior: 0!
-Provide the behavior for operating Anagram Aid.!
+!Anagram commentStamp: 'dhn 9/22/2015 19:27' prior: 0!
+An aid for solving anagrams with different behavior for short and long anagrams. 
+
+With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.
+
+The setting which determines whether clues are random or permuted is in Anagram class>>permuteLimit.!
 
 !AnagramWindow commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
 The window for Anagram Aid.!
