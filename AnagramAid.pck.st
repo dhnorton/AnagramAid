@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2505] on 22 September 2015 at 7:30:37.212788 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 6 November 2015 at 1:37:00.794275 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 19!
+!provides: 'AnagramAid' 1 22!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -11,14 +11,14 @@ TextModel subclass: #Anagram
 Anagram class
 	instanceVariableNames: ''!
 
-!classDefinition: #AnagramWindow category: #AnagramAid!
-SystemWindow subclass: #AnagramWindow
+!classDefinition: #AnagramMorph category: #AnagramAid!
+SystemWindow subclass: #AnagramMorph
 	instanceVariableNames: 'buttonPane statusString cluesString'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AnagramAid'!
-!classDefinition: 'AnagramWindow class' category: #AnagramAid!
-AnagramWindow class
+!classDefinition: 'AnagramMorph class' category: #AnagramAid!
+AnagramMorph class
 	instanceVariableNames: ''!
 
 
@@ -29,7 +29,7 @@ With a long anagram, random re-arrangements are listed as clues. One may remove 
 
 The setting which determines whether clues are random or permuted is in Anagram class>>permuteLimit.!
 
-!AnagramWindow commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
+!AnagramMorph commentStamp: 'dhn 1/26/2015 18:39' prior: 0!
 The window for Anagram Aid.!
 
 !TextComposition methodsFor: '*AnagramAid' stamp: 'dhn 8/26/2015 18:32'!
@@ -271,15 +271,15 @@ permuteLimit
 	"Answer the maximum size of the anagram which will be permuted"
 	^ 5! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:44'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 11/6/2015 11:07'!
 addAllButtons: aCollection
 	"Add all the buttons in aCollection to the button pane"
 	aCollection do: [ :ea |
 		buttonPane
 			addMorph: ea
-			proportionalWidth: AnagramWindow buttonWidth]! !
+			proportionalWidth: self class buttonWidth]! !
 
-!AnagramWindow methodsFor: 'resizing' stamp: 'dhn 8/31/2015 13:16'!
+!AnagramMorph methodsFor: 'resizing' stamp: 'dhn 8/31/2015 13:16'!
 adjustExtentFor: aString
 	"Set width of extent  such that clues of aString appear in columns"
 	| innerMorph charPixels oldExtent newWidth scrollPixels nl pad clue cols |
@@ -303,7 +303,7 @@ adjustExtentFor: aString
 	
 	self morphExtent: newWidth @ (oldExtent y).! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/31/2015 16:51'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 11/6/2015 11:47'!
 buildMorphicWindow
 	"Specify the layout for the Anagram Assistant window"
 	| status cluesMorph statusMorph clues |
@@ -335,48 +335,56 @@ buildMorphicWindow
 			addMorph: status proportionalHeight: 0.15;		
 			addMorph: buttonPane fixedHeight: 26;		
 			addMorph: clues proportionalHeight: 1.0.
-			
-	model putButtons: {model newButton}
 ! !
 
-!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
+!AnagramMorph methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
 cluesString
 	^ cluesString! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 8/25/2015 17:18'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 8/25/2015 17:18'!
 initialize
 	super initialize! !
 
-!AnagramWindow methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:44'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:44'!
 removeButtons
 	"Remove all buttons from the button pane"
 	buttonPane removeAllMorphs.! !
 
-!AnagramWindow methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
+!AnagramMorph methodsFor: 'accessing' stamp: 'dhn 1/26/2015 18:41'!
 statusString
 	^ statusString! !
 
-!AnagramWindow class methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:38'!
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 1/26/2015 18:38'!
 buttonWidth
 	"Answer button width as a proportion of the width of the containing morph"
 	^ 0.2! !
 
-!AnagramWindow class methodsFor: 'initialization' stamp: 'dhn 8/25/2015 20:22'!
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:32'!
 how
 "
-	AnagramWindow open.
+	New morph... or
+	AnagramMorph open.
 "! !
 
-!AnagramWindow class methodsFor: 'initialization' stamp: 'dhn 8/25/2015 20:18'!
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:15'!
+includeInNewMorphMenu
+	"Return true for all classes that can be instantiated from the menu"
+	^ true! !
+
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:36'!
+initializedInstance
+	"Enable instantiation from the new morph menu"
+
+	^ self open! !
+
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:34'!
 open
-	| main win |
-	main _ Anagram new.
-	win _ self new.
-	win setLabel: 'Anagram Aid';
-		model: main;
-		openInWorld.
-	main board: win.
-	win owner doOneCycleNow.
-	win buildMorphicWindow
-	
-! !
+"
+	AnagramMorph open.
+"
+	| mod win |
+
+	win _ self open: (mod _ Anagram new) label: 'Anagram Aid'	.
+	mod board: win.
+	win addAllButtons: {mod newButton}.
+	^ win! !
