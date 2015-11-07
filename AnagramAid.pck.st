@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2568] on 6 November 2015 at 1:37:00.794275 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2571] on 6 November 2015 at 7:03:44.387731 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 22!
+!provides: 'AnagramAid' 1 24!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -366,7 +366,7 @@ how
 	AnagramMorph open.
 "! !
 
-!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:15'!
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 19:03'!
 includeInNewMorphMenu
 	"Return true for all classes that can be instantiated from the menu"
 	^ true! !
