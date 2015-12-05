@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2571] on 6 November 2015 at 7:03:44.387731 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 5 December 2015 at 8:17:20.733952 am'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 24!
+!provides: 'AnagramAid' 1 25!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -74,7 +74,7 @@ configureButtons
 				ifTrue: [ self putButtons: {self newButton} ]
 				ifFalse: [ self putButtons: {self newButton. self withoutButton. self revertButton} ]].! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 9/1/2015 14:57'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 12/5/2015 07:54'!
 entry
 	"Acquire a new anagram"
 	| ans |
@@ -85,8 +85,9 @@ entry
 		jmb _ (ans copyWithout: $ ) asUppercase.
 		count _ 0.
 		omitted _ String new.
-		self more].
-	self configureButtons.! !
+		self 
+			more;
+			configureButtons]! !
 
 !Anagram methodsFor: 'operating' stamp: 'dhn 9/2/2015 16:55'!
 fontName
@@ -303,7 +304,7 @@ adjustExtentFor: aString
 	
 	self morphExtent: newWidth @ (oldExtent y).! !
 
-!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 11/6/2015 11:47'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 12/5/2015 08:14'!
 buildMorphicWindow
 	"Specify the layout for the Anagram Assistant window"
 	| status cluesMorph statusMorph clues |
@@ -317,7 +318,7 @@ buildMorphicWindow
 	buttonPane _ LayoutMorph newRow
 		name: #buttons;
 		padding: #center; "#center causes the buttons to be centered in the row"
-		color: Color lightGreen.
+		doAdoptWidgetsColor.
 	
 	clues _ LayoutMorph newRow
 		name: 'clue area';
@@ -377,7 +378,7 @@ initializedInstance
 
 	^ self open! !
 
-!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 11/6/2015 13:34'!
+!AnagramMorph class methodsFor: 'initialization' stamp: 'dhn 12/5/2015 07:50'!
 open
 "
 	AnagramMorph open.
@@ -386,5 +387,7 @@ open
 
 	win _ self open: (mod _ Anagram new) label: 'Anagram Aid'	.
 	mod board: win.
-	win addAllButtons: {mod newButton}.
+	win 
+		setWindowColor: Color lightGreen;
+		addAllButtons: {mod newButton}.
 	^ win! !
