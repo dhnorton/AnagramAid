@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2621] on 5 December 2015 at 8:17:20.733952 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2679] on 31 January 2016 at 5:34:47.357806 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 25!
+!provides: 'AnagramAid' 1 26!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -102,12 +102,15 @@ initialize
 	cluesFont _ AbstractFont familyName: self fontName aroundPointSize: 10
 ! !
 
-!Anagram methodsFor: 'operating' stamp: 'dhn 8/29/2015 20:16'!
+!Anagram methodsFor: 'operating' stamp: 'dhn 1/31/2016 17:31'!
 letterCount: aString
 	"Answer a print string showing the number of times letters appear in aString"
-	| dix sorted str |
+	| col dix sorted str |
+
+	col _ OrderedCollection new.
+	aString asByteArray sort do: [:byte | col addLast: byte asCharacter].
 	dix _ Dictionary new.
-	aString sort do: [ :ea | | sym |
+	col do: [ :ea | | sym |
 		sym _ ea asSymbol.
 		(dix includesKey: sym)
 			ifTrue: [dix at: sym put: (dix at: sym) + 1]
