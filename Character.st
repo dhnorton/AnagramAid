@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2658] on 31 January 2016 at 2:09:21.286079 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2676] on 31 January 2016 at 2:15:34.896426 pm'!
 !classDefinition: #Character category: #'Kernel-Text'!
-Magnitude subclass: #Character
+Object subclass: #Character
 	instanceVariableNames: 'value'
 	classVariableNames: 'CharacterTable ClassificationTable LetterBits LowercaseBit UnaccentedTable UnicodeCodePoints UppercaseBit'
 	poolDictionaries: ''
