@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2679] on 31 January 2016 at 5:34:47.357806 pm'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2690] on 22 February 2016 at 6:29:24.643073 pm'!
 'Description An aid for solving anagrams with different behavior for short and long anagrams. With a long anagram, random re-arrangements are listed as clues. One may remove letters and study the remainder. Removed letters can be returned. Short anagrams produce a list of permutations.'!
-!provides: 'AnagramAid' 1 26!
+!provides: 'AnagramAid' 1 27!
 !classDefinition: #Anagram category: #AnagramAid!
 TextModel subclass: #Anagram
 	instanceVariableNames: 'board clues cluesFont count jmb omitted omit'
@@ -307,7 +307,7 @@ adjustExtentFor: aString
 	
 	self morphExtent: newWidth @ (oldExtent y).! !
 
-!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 12/5/2015 08:14'!
+!AnagramMorph methodsFor: 'initialization' stamp: 'dhn 2/22/2016 18:26'!
 buildMorphicWindow
 	"Specify the layout for the Anagram Assistant window"
 	| status cluesMorph statusMorph clues |
@@ -316,7 +316,9 @@ buildMorphicWindow
 		name: 'status area';
 		addMorph: (statusMorph _ TextModelMorph 
 			withModel: (statusString _ TextModel withText: 'Status Area')).
-	statusMorph name: #status.
+	statusMorph 
+		name: #status;
+		layoutSpec: LayoutSpec useAll.
 			
 	buttonPane _ LayoutMorph newRow
 		name: #buttons;
@@ -327,7 +329,10 @@ buildMorphicWindow
 		name: 'clue area';
 		addMorph: (cluesMorph _ TextModelMorph 
 			withModel: (cluesString _ TextModel withText: 'Clues Area')).
-	cluesMorph name: #clues.
+	cluesMorph 
+		name: #clues;
+		layoutSpec: LayoutSpec useAll.
+
 			
 	statusMorph askBeforeDiscardingEdits: false;
 		wrapFlag: true.
@@ -336,7 +341,7 @@ buildMorphicWindow
 		wrapFlag: true.
 		
 	self layoutMorph
-			addMorph: status proportionalHeight: 0.15;		
+			addMorph: status proportionalHeight: 0.15; 	
 			addMorph: buttonPane fixedHeight: 26;		
 			addMorph: clues proportionalHeight: 1.0.
 ! !
